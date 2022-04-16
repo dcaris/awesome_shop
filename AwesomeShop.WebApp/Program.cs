@@ -1,7 +1,16 @@
+using AwesomeShop.AzureQueueLibrary.Infrastructure;
+using Microsoft.Extensions.Azure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAzureQueueLibrary(builder.Configuration["AzureWebJobsStorage"]);
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(builder.Configuration["StorageConnectionString:blob"], preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["StorageConnectionString:queue"], preferMsi: true);
+});
 
 var app = builder.Build();
 
